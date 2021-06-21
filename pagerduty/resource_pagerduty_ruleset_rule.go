@@ -312,9 +312,12 @@ func buildRulesetRuleStruct(d *schema.ResourceData) *pagerduty.RulesetRule {
 			Type: "ruleset",
 			ID:   d.Get("ruleset").(string),
 		},
-		Conditions: expandConditions(d.Get("conditions").([]interface{})),
 	}
-
+	if attr, ok := d.GetOk("conditions"); ok {
+		rule.Conditions = expandConditions(attr.([]interface{}))
+	} else {
+		rule.CatchAll = true
+	}
 	if attr, ok := d.GetOk("actions"); ok {
 		rule.Actions = expandActions(attr.([]interface{}))
 	}
